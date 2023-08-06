@@ -1,3 +1,5 @@
+from globals import *
+
 from dotenv import load_dotenv
 from discord import app_commands
 

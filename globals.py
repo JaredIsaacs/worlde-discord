@@ -11,6 +11,10 @@ INCORRECT_CHAR = '#787c7f'
 MISPLACED_CHAR = '#c8b653'
 CORRECT_CHAR = '#6ca965'
 
-INCORRECT_CHAR = '#787c7f'
-MISPLACED_CHAR = '#c8b653'
-CORRECT_CHAR = '#6ca965'
+WORDLE_COLORS = {
+    0 : INCORRECT_CHAR,
+    1 : MISPLACED_CHAR,
+    2 : CORRECT_CHAR
+}
+
+WORDLE_URL = 'https://wordle-api.vercel.app/api/wordle'
