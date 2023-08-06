@@ -18,3 +18,5 @@ WORDLE_COLORS = {
 }
 
 WORDLE_URL = 'https://wordle-api.vercel.app/api/wordle'
+
+BOARD = None

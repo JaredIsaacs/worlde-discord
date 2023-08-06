@@ -6,6 +6,8 @@ from wordlerequest import get_wordle_info
 
 class WordleBoard():
     def __init__(self):
+        self.isWinner = False
+        self.correct_chars = 0
         self.accuracy_board = [
             [None, None, None, None, None],
             [None, None, None, None, None],
@@ -14,7 +16,6 @@ class WordleBoard():
             [None, None, None, None, None],
             [None, None, None, None, None]
         ]
-
         self.letter_board = [
         [None, None, None, None, None],
         [None, None, None, None, None],
@@ -26,7 +27,8 @@ class WordleBoard():
 
 
     def process_word(self, word: str):
-        assert len(word) == 5, 'Invalid Word Length'
+        assert len(word) == 5, f'{word} is not 5 characters long!'
+        self.correct_chars = 0
         word = word.upper()
         wordle_info = get_wordle_info(word)
 
@@ -38,6 +40,7 @@ class WordleBoard():
         if wordle_info['was_correct']:
             for i, char in enumerate(word):
                 accuracy_row[i] = 2
+                self.isWinner = True
         else:
             i = 0
             accuracy = 0
@@ -47,6 +50,7 @@ class WordleBoard():
 
                 if character_scoring['in_word'] and character_scoring['correct_idx']:
                     accuracy = 2
+                    self.correct_chars += 1
                 elif character_scoring['in_word'] and not character_scoring['correct_idx']:
                     accuracy = 1
                 else:
@@ -94,10 +98,3 @@ class WordleBoard():
         draw.rectangle((0, 0, WORD_HEIGHT, WORD_WIDTH), fill=(255, 255, 255), outline=(211,215,219), width=3)
 
         return board
-
-board = WordleBoard()
-board.process_word('wordl')
-board.process_word('sally')
-board.process_word('nutty')
-board.process_word('bunny')
-board.create_wordle_board().show()
