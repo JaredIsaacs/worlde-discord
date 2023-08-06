@@ -6,7 +6,7 @@ from wordlerequest import get_wordle_info
 
 class WordleBoard():
     def __init__(self):
-        self.isWinner = False
+        self.isWinner = None
         self.correct_chars = 0
         self.accuracy_board = [
             [None, None, None, None, None],
@@ -57,10 +57,16 @@ class WordleBoard():
                     accuracy = 0
 
                 accuracy_row[i] = accuracy
-                i += 1
+                i += 1  
+                
+        if self.check_for_loss():
+            self.isWinner = False 
 
-        print(self.letter_board)
-        print(self.accuracy_board)       
+
+    def check_for_loss(self):
+         if None not in self.accuracy_board[5] and self.isWinner != True:
+             return True
+            
 
 
     def create_wordle_square(self, char: str, x: int, y: int) -> Image:
