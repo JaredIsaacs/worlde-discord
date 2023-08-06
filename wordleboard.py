@@ -36,8 +36,8 @@ class WordleBoard():
 
         accuracy_row = next(row for row in self.accuracy_board if None in row)
         if wordle_info['was_correct']:
-            for row in accuracy_row:
-                row = 2
+            for i, char in enumerate(word):
+                accuracy_row[i] = 2
         else:
             i = 0
             accuracy = 0
@@ -94,3 +94,10 @@ class WordleBoard():
         draw.rectangle((0, 0, WORD_HEIGHT, WORD_WIDTH), fill=(255, 255, 255), outline=(211,215,219), width=3)
 
         return board
+
+board = WordleBoard()
+board.process_word('wordl')
+board.process_word('sally')
+board.process_word('nutty')
+board.process_word('bunny')
+board.create_wordle_board().show()
