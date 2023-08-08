@@ -52,9 +52,11 @@ async def wordle(interaction: discord.Interaction, word: str):
         board = wordleboard.WordleBoard(accuracy_board=accuracy_board, letter_board=letter_board)
     else:
         board = wordleboard.WordleBoard()
+
     if wordle_db.check_complete(guild_id):
         await interaction.response.send_message(f'Sorry, {interaction.user.mention}. But the wordle of the day has already been completed.\nTo see the board, type /board.')
-
+        return
+    
     try:
         board.process_word(word)
     

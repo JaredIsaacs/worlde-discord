@@ -82,3 +82,10 @@ class WordleDB():
         letter_board = pickle.loads(boards[1])
 
         return accuracy_board, letter_board
+    
+    
+    def get_all_wordles(self):
+        # For Debug purposes
+        self.cur.execute('SELECT date, guild_id, completed, won FROM wordle')
+        for e in self.cur:
+            print(e)
