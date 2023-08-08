@@ -5,25 +5,33 @@ from wordlerequest import get_wordle_info
 
 
 class WordleBoard():
-    def __init__(self):
+    def __init__(self, accuracy_board: list = None, letter_board: list = None):
         self.isWinner = None
         self.correct_chars = 0
-        self.accuracy_board = [
-            [None, None, None, None, None],
-            [None, None, None, None, None],
-            [None, None, None, None, None],
-            [None, None, None, None, None],
-            [None, None, None, None, None],
-            [None, None, None, None, None]
-        ]
-        self.letter_board = [
-        [None, None, None, None, None],
-        [None, None, None, None, None],
-        [None, None, None, None, None],
-        [None, None, None, None, None],
-        [None, None, None, None, None],
-        [None, None, None, None, None]
-    ]
+
+        if accuracy_board is None:
+            self.accuracy_board = [
+                [None, None, None, None, None],
+                [None, None, None, None, None],
+                [None, None, None, None, None],
+                [None, None, None, None, None],
+                [None, None, None, None, None],
+                [None, None, None, None, None]
+            ]
+        else:
+            self.accuracy_board = accuracy_board
+
+        if letter_board is None: 
+            self.letter_board = [
+                [None, None, None, None, None],
+                [None, None, None, None, None],
+                [None, None, None, None, None],
+                [None, None, None, None, None],
+                [None, None, None, None, None],
+                [None, None, None, None, None]
+            ]
+        else:
+            self.letter_board = letter_board
 
 
     def process_word(self, word: str):

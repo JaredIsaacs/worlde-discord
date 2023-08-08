@@ -19,4 +19,4 @@ WORDLE_COLORS = {
 
 WORDLE_URL = 'https://wordle-api.vercel.app/api/wordle'
 
-BOARD = None
+DB_PATH = 'db/wordle.db'

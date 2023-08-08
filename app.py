@@ -5,10 +5,12 @@ from discord import app_commands
 
 import discord, os, logging, io
 
-import wordleboard
+import wordleboard, wordledb
 
 load_dotenv()
 GUILD_ID = discord.Object(id=os.getenv('GUILD_ID'))
+
+
 
 class MyClient(discord.Client):
     def __init__(self, *, intents: discord.Intents):
@@ -21,6 +23,8 @@ class MyClient(discord.Client):
         await self.tree.sync(guild=GUILD_ID)
 
 
+wordle_db = wordledb.WordleDB()
+
 intents = discord.Intents.default()
 intents.message_content = True
 client = MyClient(intents=intents)
@@ -28,31 +32,46 @@ client = MyClient(intents=intents)
 
 @client.event
 async def on_ready():
+    wordle_db.init_db()
     print(f'App running. Logged on as {client.user.id}!')
+
+
+@client.event
+async def on_guild_join(guild: discord.guild.Guild):
+    print(guild)
+    client.tree.copy_global_to(guild=guild)
+    await client.tree.sync(guild=guild)
 
 
 @client.tree.command()
 async def wordle(interaction: discord.Interaction, word: str):
-    global BOARD
+    guild_id = interaction.guild_id
 
-    if BOARD == None:
-        BOARD = wordleboard.WordleBoard()
+    if wordle_db.check_exists(guild_id):
+        accuracy_board, letter_board = wordle_db.get_wordle_progress(guild_id)
+        board = wordleboard.WordleBoard(accuracy_board=accuracy_board, letter_board=letter_board)
+    else:
+        board = wordleboard.WordleBoard()
+    if wordle_db.check_complete(guild_id):
+        await interaction.response.send_message(f'Sorry, {interaction.user.mention}. But the wordle of the day has already been completed.\nTo see the board, type /board.')
 
     try:
-        BOARD.process_word(word)
+        board.process_word(word)
     
-        board_file = convert_to_image()
+        board_file = convert_to_image(board)
         embed = create_embed(interaction)
 
-        if BOARD.isWinner == True:
+        if board.isWinner == True:
+            wordle_db.update_wordle_progress(guild_id, accuracy_board=board.accuracy_board, letter_board=board.letter_board, completed=True, won=False)
             embed.description = 'You win!'
-            BOARD = None
-        elif BOARD.isWinner == False:
+        elif board.isWinner == False:
+            wordle_db.update_wordle_progress(guild_id, accuracy_board=board.accuracy_board, letter_board=board.letter_board, completed=True, won=False)
             embed.description = 'You lose!'
-            BOARD = None
         else:
-            embed.description = f'Correct Characters: {BOARD.correct_chars}'
+            wordle_db.update_wordle_progress(guild_id, accuracy_board=board.accuracy_board, letter_board=board.letter_board)
+            embed.description = f'Correct Characters: {board.correct_chars}'
 
+        
         await interaction.response.send_message(file=board_file, embed=embed)
     except AssertionError:
         await interaction.response.send_message(f'Sorry, {interaction.user.mention}. But the word {word} is not 5 characters long!')
@@ -67,9 +86,9 @@ def create_embed(interaction: discord.Interaction):
     return embed
 
 
-def convert_to_image():
+def convert_to_image(board):
     with io.BytesIO() as image_binary:
-        BOARD.create_wordle_board().save(image_binary, 'PNG')
+        board.create_wordle_board().save(image_binary, 'PNG')
         image_binary.seek(0)
         return discord.File(image_binary, filename='wordle.png')
 
