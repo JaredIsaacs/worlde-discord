@@ -77,7 +77,7 @@ jobs:
         with:
           # Make sure ExecStart=, WorkingDirectory= and chmod +x point to the same directory. These may be unique to your code setup
           command: |
-            sudo echo "[Unit]
+            echo "[Unit]
             Description=${{ env.REPO_NAME }} Discord Bot
             After=multi-user.target
             [Service]
@@ -88,7 +88,8 @@ jobs:
             RestartSec=30
             WorkingDirectory=/home/ubuntu/${{ env.REPO_NAME }}/
             [Install]
-            WantedBy=multi-user.target" >> /etc/systemd/system/${{ env.REPO_NAME }}.service
+            WantedBy=multi-user.target" >> ./${{ env.REPO_NAME }}.service
+            sudo mv ./${{ env.REPO_NAME }}.service /etc/systemd/system/
             sudo chmod +x /home/ubuntu/${{ env.REPO_NAME }}/app.py
             sudo systemctl enable ${{ env.REPO_NAME }}.service
             sudo systemctl daemon-reload
@@ -105,14 +106,15 @@ jobs:
         uses: fifsky/ssh-action@master
         with:
           command: |
-            sudo echo "[Unit]
+            echo "[Unit]
             Description=${{ env.REPO_NAME }} Discord Bot restart
             After=multi-user.target
             [Service]
             Type=oneshot
             ExecStart=/usr/bin/systemctl restart ${{ env.REPO_NAME }}.service
             [Install]
-            WantedBy=multi-user.target" >> /etc/systemd/system/${{ env.REPO_NAME }}-watcher.service
+            WantedBy=multi-user.target" >> ./${{ env.REPO_NAME }}-watcher.service
+            sudo mv ./${{ env.REPO_NAME }}-watcher.service /etc/systemd/system/
             sudo systemctl enable ${{ env.REPO_NAME }}-watcher.service
             sudo systemctl daemon-reload
             sudo systemctl start ${{ env.REPO_NAME }}-watcher.service
