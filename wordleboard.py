@@ -1,6 +1,5 @@
 from globals import *
 from PIL import Image, ImageDraw, ImageFont
-from enum import Enum
 from wordlerequest import get_wordle_info
 
 
@@ -35,7 +34,9 @@ class WordleBoard():
 
 
     def process_word(self, word: str):
-        assert len(word) == 5, f'{word} is not 5 characters long!'
+        assert len(word) == 5, f'{word} is not 5 characters long!' #Check if word is correct length
+        #assert word in WORD_LIST, f'{word} is not in the word list!' #Check if word is in the word list. Can maybe combine this with previous check.
+
         self.correct_chars = 0
         word = word.upper()
         wordle_info = get_wordle_info(word)
@@ -48,11 +49,11 @@ class WordleBoard():
         if wordle_info['was_correct']:
             for i, char in enumerate(word):
                 accuracy_row[i] = 2
-                self.isWinner = True
+            self.isWinner = True
         else:
             i = 0
             accuracy = 0
- 
+
             while len(wordle_info['character_info']) != 0:
                 character_scoring = wordle_info['character_info'].pop(0)['scoring']
 
@@ -72,8 +73,8 @@ class WordleBoard():
 
 
     def check_for_loss(self):
-         if None not in self.accuracy_board[5] and self.isWinner != True:
-             return True
+        if None not in self.accuracy_board[5] and self.isWinner != True:
+            return True
             
 
 

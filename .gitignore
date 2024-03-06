@@ -1,0 +1,10 @@
+#Ignores
+.*
+logs
+*.log
+__pycache__
+db/*
+
+#Exceptions
+!.github
+!.gitignore

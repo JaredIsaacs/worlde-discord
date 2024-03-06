@@ -75,8 +75,8 @@ async def wordle(interaction: discord.Interaction, word: str):
 
         
         await interaction.response.send_message(file=board_file, embed=embed)
-    except AssertionError:
-        await interaction.response.send_message(f'Sorry, {interaction.user.mention}. But the word {word} is not 5 characters long!')
+    except AssertionError as e:
+        await interaction.response.send_message(f'Sorry, {interaction.user.mention}. But the word {e}')
 
 
 def create_embed(interaction: discord.Interaction):
