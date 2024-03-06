@@ -96,5 +96,8 @@ def convert_to_image(board):
 
 
 if __name__ == '__main__':
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
+
     handler = logging.FileHandler(filename='logs/debug.log', encoding='utf-8', mode='w')
     client.run(os.getenv('BOT_TOKEN'), log_handler=handler, log_level=logging.DEBUG)

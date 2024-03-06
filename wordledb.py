@@ -1,9 +1,11 @@
 import sqlite3, datetime, pickle
-
+from os import path, makedirs
 from globals import *
 
 class WordleDB():
     def __init__(self) -> None:
+        if not path.exists('db'):
+            makedirs('db')
         self.conn = sqlite3.connect(DB_PATH)
         self.cur = self.conn.cursor()
 
