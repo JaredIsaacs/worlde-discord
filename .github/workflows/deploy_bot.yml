@@ -88,8 +88,8 @@ jobs:
             RestartSec=30
             WorkingDirectory=/home/ubuntu/${{ env.REPO_NAME }}/
             [Install]
-            WantedBy=multi-user.target" >> /etc/systemd/system/${{ env.REPO_NAME }}.service
-            chmod +x /home/ubuntu/${{ env.REPO_NAME }}/app.py
+            sudo WantedBy=multi-user.target" >> /etc/systemd/system/${{ env.REPO_NAME }}.service
+            sudo chmod +x /home/ubuntu/${{ env.REPO_NAME }}/app.py
             sudo systemctl enable ${{ env.REPO_NAME }}.service
             sudo systemctl daemon-reload
             sudo systemctl start ${{ env.REPO_NAME }}.service
