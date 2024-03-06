@@ -62,7 +62,7 @@ jobs:
             cd ${{ env.REPO_NAME }}
             touch .env
             echo "BOT_TOKEN=${{ env.BOT_TOKEN }}" > .env
-            echo "GUILD_ID=${{ env.GUILD_ID }}" >> .env
+            echo "GUILD_ID=331242821480873984" >> .env
             echo $?
           host: 132.145.220.235
           user: ubuntu
