@@ -35,7 +35,7 @@ class WordleBoard():
 
     def process_word(self, word: str):
         assert len(word) == 5, f'{word} is not 5 characters long!' #Check if word is correct length
-        assert word in WORD_LIST, f'{word} is not in the word list!' #Check if word is in the word list. Can maybe combine this with previous check.
+        assert word.lower() in WORD_LIST, f'{word} is not in the word list!' #Check if word is in the word list. Can maybe combine this with previous check.
 
         self.correct_chars = 0
         word = word.upper()

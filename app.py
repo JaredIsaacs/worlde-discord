@@ -10,8 +10,6 @@ import wordleboard, wordledb
 load_dotenv()
 GUILD_ID = discord.Object(id=os.getenv('GUILD_ID'))
 
-
-
 class MyClient(discord.Client):
     def __init__(self, *, intents: discord.Intents):
         super().__init__(intents=intents)
@@ -98,6 +96,10 @@ def convert_to_image(board):
 if __name__ == '__main__':
     if not os.path.exists('logs'):
         os.makedirs('logs')
+
+    with open('wordlist.txt', 'r') as open_file:
+        for line in open_file:
+            WORD_LIST.add(line.strip())
 
     handler = logging.FileHandler(filename='logs/debug.log', encoding='utf-8', mode='w')
     client.run(os.getenv('BOT_TOKEN'), log_handler=handler, log_level=logging.DEBUG)
