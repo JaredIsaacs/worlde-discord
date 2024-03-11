@@ -17,8 +17,6 @@ WORDLE_COLORS = {
     2 : CORRECT_CHAR
 }
 
-WORDLE_URL = 'https://wordle-api.vercel.app/api/wordle'
-
 DB_PATH = 'db/wordle.db'
 
 WORD_LIST = set()

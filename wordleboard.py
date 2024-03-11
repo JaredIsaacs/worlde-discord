@@ -1,6 +1,5 @@
 from globals import *
 from PIL import Image, ImageDraw, ImageFont
-from wordlerequest import get_wordle_info
 
 
 class WordleBoard():
@@ -33,49 +32,52 @@ class WordleBoard():
             self.letter_board = letter_board
 
 
-    def process_word(self, word: str):
-        assert len(word) == 5, f'{word} is not 5 characters long!' #Check if word is correct length
-        assert word.lower() in WORD_LIST, f'{word} is not in the word list!' #Check if word is in the word list. Can maybe combine this with previous check.
+    def process_word(self, guess: str, word: str):
+        assert len(guess) == 5, f'{guess} is not 5 characters long!' #Check if guess is correct length
+        assert guess.lower() in WORD_LIST, f'{guess} is not in the guess list!' #Check if guess is in the guess list. Can maybe combine this with previous check.
 
         self.correct_chars = 0
-        word = word.upper()
-        wordle_info = get_wordle_info(word)
+        guess = guess.upper()
+        unmatched = {}
 
         letter_row = next(row for row in self.letter_board if None in row)
-        for i, char in enumerate(word): 
+        for i, char in enumerate(guess): 
             letter_row[i] = char
 
         accuracy_row = next(row for row in self.accuracy_board if None in row)
-        if wordle_info['was_correct']:
-            for i, char in enumerate(word):
+        for i in range(len(word)):
+            if word[i] == guess[i]:
                 accuracy_row[i] = 2
-            self.isWinner = True
-        else:
-            i = 0
-            accuracy = 0
+                self.correct_chars += 1
+            else:
+                unmatched[word[i]] = unmatched.get(word[i], 0) + 1
 
-            while len(wordle_info['character_info']) != 0:
-                character_scoring = wordle_info['character_info'].pop(0)['scoring']
-
-                if character_scoring['in_word'] and character_scoring['correct_idx']:
-                    accuracy = 2
-                    self.correct_chars += 1
-                elif character_scoring['in_word'] and not character_scoring['correct_idx']:
-                    accuracy = 1
+        for i in range(len(guess)):
+            if guess[i] != word[i]:
+                if unmatched.get(guess[i], 0) > 0:
+                    accuracy_row[i] = 1
+                    unmatched[guess[i]] -= 1
                 else:
-                    accuracy = 0
+                    accuracy_row[i] = 0
+    
 
-                accuracy_row[i] = accuracy
-                i += 1  
-                
+        if self.check_for_win(accuracy_row):
+            self.isWinner = True
+
         if self.check_for_loss():
             self.isWinner = False 
 
 
     def check_for_loss(self):
         if None not in self.accuracy_board[5] and self.isWinner != True:
+            return True  
+
+
+    def check_for_win(self, row):
+        for i in range(len(row)):
+            if row[i] != 2:
+                return False
             return True
-            
 
 
     def create_wordle_square(self, char: str, x: int, y: int) -> Image:

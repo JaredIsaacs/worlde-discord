@@ -1,4 +1,4 @@
-import sqlite3, datetime, pickle
+import sqlite3, datetime, pickle, random
 from os import path, makedirs
 from globals import *
 
@@ -19,10 +19,13 @@ class WordleDB():
         self.cur.execute('''CREATE TABLE IF NOT EXISTS wordle
                     (date TEXT NOT NULL, guild_id INTEGER NOT NULL, completed TEXT,
                     won TEXT, accuracy_board BINARY NOT NULL, letter_board BINARY NOT NULL)''')
+        
+        self.cur.execute('''CREATE TABLE IF NOT EXISTS wordle_word (date TEXT NOT NULL, word TEXT NOT NULL)''')
+
         self.conn.commit()
 
 
-    def check_exists(self, guild_id: int) -> bool:
+    def check_guild_exists(self, guild_id: int) -> bool:
         today = datetime.date.today()
         guild = self.cur.execute('''SELECT * FROM wordle
                             WHERE guild_id = ? AND date = ?''', (guild_id, today))
@@ -63,7 +66,7 @@ class WordleDB():
         p_accuracy = pickle.dumps(accuracy_board, protocol=pickle.HIGHEST_PROTOCOL)
         p_letter = pickle.dumps(letter_board, protocol=pickle.HIGHEST_PROTOCOL)
 
-        if self.check_exists(guild_id):
+        if self.check_guild_exists(guild_id):
             self.cur.execute('''UPDATE wordle 
                         SET completed = ?, won = ?, accuracy_board = ?, letter_board = ?
                         WHERE guild_id = ? AND date = ?''', (completed, won, p_accuracy, p_letter, guild_id, today))
@@ -83,9 +86,41 @@ class WordleDB():
         accuracy_board = pickle.loads(boards[0])
         letter_board = pickle.loads(boards[1])
 
-        return accuracy_board, letter_board
+        return accuracy_board, letter_board 
     
-    
+
+    def update_word(self) -> str:
+        today = datetime.date.today()
+        word = random.choice(list(WORD_LIST))
+
+        self.cur.execute('''INSERT INTO wordle_word (date, word) values (?, ?)''', (today, word))
+        self.conn.commit()
+
+        return word
+
+
+    def check_word_exists(self):
+        today = datetime.date.today()
+
+        guild = self.cur.execute('''SELECT * FROM wordle_word
+                            WHERE date = ?''', (today,))
+        
+        if guild.fetchone():
+            return True
+        return False
+
+
+    def get_word(self) -> str:
+        today = datetime.date.today()
+
+        if self.check_word_exists():
+            word = self.cur.execute("SELECT word FROM wordle_word WHERE date = ?", (today,)).fetchone()[0]
+        else:
+            word = self.update_word()
+
+        return word.upper()
+
+
     def get_all_wordles(self):
         # For Debug purposes
         self.cur.execute('SELECT date, guild_id, completed, won FROM wordle')

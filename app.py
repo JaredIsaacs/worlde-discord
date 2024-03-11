@@ -31,6 +31,7 @@ client = MyClient(intents=intents)
 @client.event
 async def on_ready():
     wordle_db.init_db()
+    print(wordle_db.get_word())
     print(f'App running. Logged on as {client.user.id}!')
 
 
@@ -44,8 +45,9 @@ async def on_guild_join(guild: discord.guild.Guild):
 @client.tree.command()
 async def wordle(interaction: discord.Interaction, word: str):
     guild_id = interaction.guild_id
+    secret_word = wordle_db.get_word()
 
-    if wordle_db.check_exists(guild_id):
+    if wordle_db.check_guild_exists(guild_id):
         accuracy_board, letter_board = wordle_db.get_wordle_progress(guild_id)
         board = wordleboard.WordleBoard(accuracy_board=accuracy_board, letter_board=letter_board)
     else:
@@ -55,8 +57,9 @@ async def wordle(interaction: discord.Interaction, word: str):
         await interaction.response.send_message(f'Sorry, {interaction.user.mention}. But the wordle of the day has already been completed.\nTo see the board, type /board.')
         return
     
+
     try:
-        board.process_word(word)
+        board.process_word(word, secret_word)
     
         board_file = convert_to_image(board)
         embed = create_embed(interaction)
@@ -100,6 +103,7 @@ if __name__ == '__main__':
     with open('wordlist.txt', 'r') as open_file:
         for line in open_file:
             WORD_LIST.add(line.strip())
+
 
     handler = logging.FileHandler(filename='logs/debug.log', encoding='utf-8', mode='w')
     client.run(os.getenv('BOT_TOKEN'), log_handler=handler, log_level=logging.DEBUG)
