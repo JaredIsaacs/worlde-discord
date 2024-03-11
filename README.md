@@ -8,7 +8,7 @@ Simply type in /wordle 'word' and the bot will display a board for you to play t
 ## Features
 
 - Automatically construct the board behind the scenes.
-- Checks with the [Wordle API](https://github.com/petergeorgas/Wordle-API) for correct answers.
+- Generates a random word each day based on a specific word list.
 - Can Play with multiple friends at once.
 
 ## Todo
