@@ -74,10 +74,9 @@ class WordleBoard():
 
 
     def check_for_win(self, row):
-        for i in range(len(row)):
-            if row[i] != 2:
-                return False
+        if self.correct_chars == 5:
             return True
+        return False
 
 
     def create_wordle_square(self, char: str, x: int, y: int) -> Image:
